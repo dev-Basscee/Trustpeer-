@@ -1,0 +1,40 @@
+// Version: 1.0.0
+type Time__361872818 = Int;
+type TradeState__796668967 =
+  {
+    #Cancelled;
+    #Completed;
+    #Created;
+    #Disputed;
+    #PaymentReceived;
+    #PaymentSent
+  };
+type Trade__259431547 =
+  {
+    buyer : Principal;
+    createdAt : Time__361872818;
+    disputeReason : ?Text;
+    id : Nat;
+    ngnAmount : Nat;
+    paymentReceivedAt : ?Time__361872818;
+    paymentSentAt : ?Time__361872818;
+    releaseRequestedAt : ?Time__361872818;
+    seller : Principal;
+    state : TradeState__796668967;
+    usdtAmount : Nat
+  };
+type TraderProfile__1068282381 =
+  {
+    positiveTrades : Nat;
+    principal : Principal;
+    rating : Float;
+    telegramHandle : Text;
+    totalTrades : Nat
+  };
+actor {
+  stable var admin : Principal;
+  stable var nextTradeId : Nat;
+  stable var profilesStable : [(Principal, TraderProfile__1068282381)];
+  stable var tradesStable : [(Nat, Trade__259431547)];
+  stable var usdtCanister : Principal
+};

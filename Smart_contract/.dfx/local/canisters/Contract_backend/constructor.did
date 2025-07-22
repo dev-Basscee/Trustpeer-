@@ -1,0 +1,46 @@
+type EscrowSystem = service {
+  adminCancelTrade : (nat, text) -> (Result);
+  confirmPaymentReceived : (nat) -> (Result);
+  confirmPaymentSent : (nat) -> (Result);
+  createTrade : (principal, nat, nat) -> (Result_1);
+  getProfile : (principal) -> (opt TraderProfile) query;
+  getTrade : (nat) -> (opt Trade) query;
+  initiateDispute : (nat, text) -> (Result);
+  listAllProfiles : () -> (vec TraderProfile) query;
+  listAllTrades : () -> (vec Trade) query;
+  listUserTrades : (principal) -> (vec Trade) query;
+  releaseCrypto : (nat) -> (Result);
+  updateProfile : (text) -> (Result);
+};
+type Result = variant { ok; err : text };
+type Result_1 = variant { ok : nat; err : text };
+type Time = int;
+type Trade = record {
+  id : nat;
+  disputeReason : opt text;
+  createdAt : Time;
+  seller : principal;
+  paymentSentAt : opt Time;
+  state : TradeState;
+  releaseRequestedAt : opt Time;
+  ngnAmount : nat;
+  buyer : principal;
+  paymentReceivedAt : opt Time;
+  usdtAmount : nat;
+};
+type TradeState = variant {
+  Disputed;
+  PaymentReceived;
+  PaymentSent;
+  Cancelled;
+  Created;
+  Completed;
+};
+type TraderProfile = record {
+  totalTrades : nat;
+  "principal" : principal;
+  positiveTrades : nat;
+  rating : float64;
+  telegramHandle : text;
+};
+service : (principal, principal) -> EscrowSystem

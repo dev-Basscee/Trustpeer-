@@ -1,0 +1,59 @@
+type TraderProfile = 
+ record {
+   positiveTrades: nat;
+   "principal": principal;
+   rating: float64;
+   telegramHandle: text;
+   totalTrades: nat;
+ };
+type TradeState = 
+ variant {
+   Cancelled;
+   Completed;
+   Created;
+   Disputed;
+   PaymentReceived;
+   PaymentSent;
+ };
+type Trade = 
+ record {
+   buyer: principal;
+   createdAt: Time;
+   disputeReason: opt text;
+   id: nat;
+   ngnAmount: nat;
+   paymentReceivedAt: opt Time;
+   paymentSentAt: opt Time;
+   releaseRequestedAt: opt Time;
+   seller: principal;
+   state: TradeState;
+   usdtAmount: nat;
+ };
+type Time = int;
+type Result_1 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type EscrowSystem = 
+ service {
+   adminCancelTrade: (tradeId: nat, reason: text) -> (Result);
+   confirmPaymentReceived: (tradeId: nat) -> (Result);
+   confirmPaymentSent: (tradeId: nat) -> (Result);
+   createTrade: (buyer: principal, usdtAmount: nat, ngnAmount: nat) ->
+    (Result_1);
+   getProfile: ("principal": principal) -> (opt TraderProfile) query;
+   getTrade: (tradeId: nat) -> (opt Trade) query;
+   initiateDispute: (tradeId: nat, reason: text) -> (Result);
+   listAllProfiles: () -> (vec TraderProfile) query;
+   listAllTrades: () -> (vec Trade) query;
+   listUserTrades: (user: principal) -> (vec Trade) query;
+   releaseCrypto: (tradeId: nat) -> (Result);
+   updateProfile: (telegramHandle: text) -> (Result);
+ };
+service : (initAdmin: principal, usdtCanisterId: principal) -> EscrowSystem
